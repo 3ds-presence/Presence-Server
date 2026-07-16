@@ -1,0 +1,54 @@
+services:
+  # Rust backend (presence-server)
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        - DEBUG=false # cargo build --release if false, cargo build if true
+    environment:
+      # Discord Application credentials (required)
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - REDIRECT_URI=${REDIRECT_URI}
+
+      # Database (SQLite by default, can be changed to PostgreSQL)
+      # For SQLite: sqlite:presence.db?mode=rwc
+      # For PostgreSQL: postgres://user:pass@localhost/presence_db
+      - DATABASE_URL=sqlite:/app/data/presence.db?mode=rwc
+
+      # Do not change this unless you also change the Nginx config
+      - LISTEN_ADDR=0.0.0.0:5555
+      
+      # Rate limiting
+      # Minimum seconds between two activity updates for the same client
+      - ACTIVITY_COOLDOWN_SECS=5
+      # Maximum number of concurrent sessions per IP
+      - MAX_CLIENTS_PER_IP=8
+      
+      - ASSETS_BASE_URL=${ASSETS_BASE_URL}
+      - INFO_DIR=${INFO_DIR}
+      - MII_GENERATOR_SERVER=${MII_GENERATOR_SERVER}
+
+      - RUST_LOG=debug
+    volumes:
+      # Persist SQLite database across restarts
+      - ./backend-data:/app/data
+      - ./backend/activity_manager/info:${INFO_DIR}
+    restart: unless-stopped
+
+  # Nginx reverse proxy (serves frontend + proxies /api to backend)
+  nginx:
+    build:
+      context: .
+      dockerfile: presence-frontend/Dockerfile
+      args:
+        # Used on compilation (frontend must be rebuilt if changed)
+        - VITE_DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped

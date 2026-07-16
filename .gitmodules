@@ -1,0 +1,9 @@
+[submodule "presence-frontend"]
+	path = presence-frontend
+	url = https://github.com/3ds-presence/Presence-Frontend.git
+[submodule "backend/activity_generator"]
+	path = backend/activity_generator
+	url = https://github.com/3ds-presence/Activity-Generator.git
+[submodule "backend/presence-backend"]
+	path = backend/presence-backend
+	url = https://github.com/3ds-presence/Presence-Backend
