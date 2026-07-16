@@ -2,8 +2,8 @@ services:
   # Rust backend (presence-server)
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: backend
+      dockerfile: Dockerfile
       args:
         - DEBUG=false # cargo build --release if false, cargo build if true
     environment:
@@ -34,14 +34,14 @@ services:
     volumes:
       # Persist SQLite database across restarts
       - ./backend-data:/app/data
-      - ./backend/activity_manager/info:${INFO_DIR}
+      - ./backend/activity_generator/info:${INFO_DIR}
     restart: unless-stopped
 
   # Nginx reverse proxy (serves frontend + proxies /api to backend)
   nginx:
     build:
-      context: .
-      dockerfile: presence-frontend/Dockerfile
+      context: presence-frontend
+      dockerfile: Dockerfile
       args:
         # Used on compilation (frontend must be rebuilt if changed)
         - VITE_DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}

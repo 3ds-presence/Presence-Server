@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
     
 # Copy all sources
-COPY backend/activity_generator/Cargo.toml backend/activity_generator/Cargo.toml
-COPY backend/activity_generator/src backend/activity_generator/src
+COPY ./activity_generator/Cargo.toml backend/activity_generator/Cargo.toml
+COPY ./activity_generator/src backend/activity_generator/src
 
-COPY backend/presence-backend/Cargo.toml backend/presence-backend/Cargo.toml
-COPY backend/presence-backend/src backend/presence-backend/src
+COPY ./presence-backend/Cargo.toml backend/presence-backend/Cargo.toml
+COPY ./presence-backend/src backend/presence-backend/src
 
 # Build the release binary
 WORKDIR /app/backend/presence-backend
