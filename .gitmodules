@@ -7,3 +7,6 @@
 [submodule "backend/presence-backend"]
 	path = backend/presence-backend
 	url = https://github.com/3ds-presence/Presence-Backend
+[submodule "mii-generator-server"]
+	path = mii-generator-server
+	url = https://github.com/3ds-presence/FFL-Testing.git

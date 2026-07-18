@@ -51,4 +51,29 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - backend
+      - ffl-testing-web-server
+    restart: unless-stopped
+  
+  # Services for Mii Generator Server (used for generating Mii images)
+  ffl-testing-renderer:
+    build:
+      context: mii-generator-server
+      dockerfile: Dockerfile.ffl-testing-renderer
+    container_name: ffl-testing-renderer
+    expose:
+      - "12346"
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
+    cpus: 1
+
+  ffl-testing-web-server:
+    build:
+      context: mii-generator-server
+      dockerfile: Dockerfile.ffl-testing-web-server
+    container_name: ffl-testing-web-server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - ffl-testing-renderer
     restart: unless-stopped
