@@ -60,8 +60,6 @@ services:
       context: mii-generator-server
       dockerfile: Dockerfile.ffl-testing-renderer
     container_name: ffl-testing-renderer
-    expose:
-      - "12346"
     devices:
       - /dev/dri:/dev/dri
     restart: unless-stopped
@@ -72,8 +70,6 @@ services:
       context: mii-generator-server
       dockerfile: Dockerfile.ffl-testing-web-server
     container_name: ffl-testing-web-server
-    ports:
-      - "5000:5000"
     depends_on:
       - ffl-testing-renderer
     restart: unless-stopped
