@@ -30,7 +30,7 @@ services:
       - INFO_DIR=${INFO_DIR}
       - MII_GENERATOR_SERVER=${MII_GENERATOR_SERVER}
 
-      - RUST_LOG=debug
+      - RUST_LOG=debug,sqlx=warn
     volumes:
       # Persist SQLite database across restarts
       - ./backend-data:/app/data
