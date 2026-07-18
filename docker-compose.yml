@@ -34,7 +34,7 @@ services:
     volumes:
       # Persist SQLite database across restarts
       - ./backend-data:/app/data
-      - ./backend/activity_generator/info:${INFO_DIR}
+      - ./backend/activity_generator/info:${INFO_DIR}:ro
     restart: unless-stopped
 
   # Nginx reverse proxy (serves frontend + proxies /api to backend)
@@ -49,6 +49,7 @@ services:
       - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend-dyn/:/usr/share/nginx/html/public/dyn/:ro
     depends_on:
       - backend
       - ffl-testing-web-server
