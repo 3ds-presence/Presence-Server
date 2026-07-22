@@ -64,7 +64,7 @@ services:
         # Used on compilation (frontend must be rebuilt if changed)
         - VITE_DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}
     ports:
-      - "8080:80"
+      - "${NGINX_PORT:-8080}:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./frontend-dyn/:/usr/share/nginx/html/dyn/:ro
