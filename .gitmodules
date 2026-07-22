@@ -1,12 +1,19 @@
 [submodule "presence-frontend"]
-	path = presence-frontend
-	url = https://github.com/3ds-presence/Presence-Frontend.git
+    path = presence-frontend
+    url = https://github.com/3ds-presence/Presence-Frontend.git
+    branch = main
+
 [submodule "backend/activity_generator"]
-	path = backend/activity_generator
-	url = https://github.com/3ds-presence/Activity-Generator.git
+    path = backend/activity_generator
+    url = https://github.com/3ds-presence/Activity-Generator.git
+    branch = master
+
 [submodule "backend/presence-backend"]
-	path = backend/presence-backend
-	url = https://github.com/3ds-presence/Presence-Backend
+    path = backend/presence-backend
+    url = https://github.com/3ds-presence/Presence-Backend
+    branch = master
+
 [submodule "mii-generator-server"]
-	path = mii-generator-server
-	url = https://github.com/3ds-presence/FFL-Testing.git
+    path = mii-generator-server
+    url = https://github.com/3ds-presence/FFL-Testing.git
+	ignore = all
