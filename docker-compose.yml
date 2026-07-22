@@ -27,14 +27,16 @@ services:
       - MAX_CLIENTS_PER_IP=8
       
       - ASSETS_BASE_URL=${ASSETS_BASE_URL}
-      - INFO_DIR=${INFO_DIR}
+      - SCRIPTS_DIR=${SCRIPTS_DIR}
       - MII_GENERATOR_SERVER=${MII_GENERATOR_SERVER}
+
+      - LUA_POOL_MAX=64
 
       - RUST_LOG=debug,sqlx=warn
     volumes:
       # Persist SQLite database across restarts
       - ./backend-data:/app/data
-      - ./backend/activity_generator/info:${INFO_DIR}:ro
+      - ./backend/activity_generator/scripts:${SCRIPTS_DIR}:ro
     restart: unless-stopped
 
   # Nginx reverse proxy (serves frontend + proxies /api to backend)
