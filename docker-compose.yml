@@ -46,6 +46,9 @@ services:
       - SCRIPTS_DIR=${SCRIPTS_DIR}
       - MII_GENERATOR_SERVER=${MII_GENERATOR_SERVER}
 
+      - CACHE_CAPACITY=4096
+      - CACHE_EVICT_BATCH=512
+
       - RUST_LOG=debug,sqlx=warn
     volumes:
       # Persist SQLite database across restarts
