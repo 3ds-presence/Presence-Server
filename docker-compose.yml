@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   # Rust backend (presence-server)
   backend:
@@ -55,6 +61,7 @@ services:
       - ./backend-data:/app/data
       - ./backend/activity_generator/scripts:${SCRIPTS_DIR}:ro
     restart: unless-stopped
+    logging: *default-logging
 
   # Nginx reverse proxy (serves frontend + proxies /api to backend)
   nginx:
@@ -73,6 +80,7 @@ services:
       - backend
       - ffl-testing-web-server
     restart: unless-stopped
+    logging: *default-logging
   
   # Services for Mii Generator Server (used for generating Mii images)
   ffl-testing-renderer:
@@ -84,6 +92,7 @@ services:
       - /dev/dri:/dev/dri
     restart: unless-stopped
     cpus: 1
+    logging: *default-logging
 
   ffl-testing-web-server:
     build:
@@ -93,3 +102,4 @@ services:
     depends_on:
       - ffl-testing-renderer
     restart: unless-stopped
+    logging: *default-logging
