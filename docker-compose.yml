@@ -59,8 +59,7 @@ services:
 
       - RUST_LOG=debug,sqlx=warn
     volumes:
-      # Persist SQLite database across restarts
-      - ./backend-data:/app/data
+      - backend-data:/app/data
       - ./backend/activity_generator/scripts:${SCRIPTS_DIR}:ro
     depends_on:
       - nginx
@@ -104,3 +103,6 @@ services:
       - ffl-testing-renderer
     restart: unless-stopped
     logging: *default-logging
+
+volumes:
+  backend-data:
