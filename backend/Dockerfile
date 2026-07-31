@@ -52,10 +52,16 @@ FROM docker.io/library/debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libsqlite3-0 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --system --uid 10001 --create-home --home-dir /app appuser
 WORKDIR /app
 
 COPY --from=builder /app/backend/presence-backend/target/output/presence-backend /app/presence-backend
+
+# Give the non-root user ownership of the writable data directory.
+RUN mkdir -p /app/data && chown -R appuser:appuser /app
+
+USER appuser
 
 EXPOSE 5555
 
