@@ -56,8 +56,8 @@ services:
 
       - CACHE_CAPACITY=4096
       - CACHE_EVICT_BATCH=512
-
-      - RUST_LOG=debug,sqlx=warn
+      
+      - RUST_LOG=${RUST_LOG:-info}, sqlx=warn
     volumes:
       - backend-data:/app/data
       - ./backend/activity_generator/scripts:${SCRIPTS_DIR}:ro
