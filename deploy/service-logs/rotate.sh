@@ -48,11 +48,26 @@ MAX_SIZE_BYTES="${MAX_SIZE_BYTES:-15728640}"   # 15 MiB
 
 MODE="${1:-loop}"
 
-# --- Compose project name: read from our own config.v2.json ---
-PROJECT=""
-self_cfg="${CONTAINERS_DIR}/$(hostname)/config.v2.json"
-[ -f "$self_cfg" ] && PROJECT="$(jq -r '.Config.Labels["com.docker.compose.project"] // ""' "$self_cfg" 2>/dev/null)"
-[ -z "$PROJECT" ] && PROJECT="${COMPOSE_PROJECT_NAME:-}"
+# --- Compose project name ---
+# Preferred source: COMPOSE_PROJECT_NAME, injected by docker-compose.yml.
+PROJECT="${COMPOSE_PROJECT_NAME:-}"
+
+if [ -z "$PROJECT" ]; then
+  # Fallback: find our own container dir. Within the container, hostname is
+  # the short container ID (12 chars) while the directory under
+  # /var/lib/docker/containers uses the full ID (64 chars), so match by prefix.
+  myid="$(hostname)"
+  for cfg in "$CONTAINERS_DIR"/*/config.v2.json; do
+    [ -f "$cfg" ] || continue
+    cid="$(basename "$(dirname "$cfg")")"
+    case "$cid" in
+      "$myid"*)  # full dir ID starts with the short hostname ID
+        PROJECT="$(jq -r '.Config.Labels["com.docker.compose.project"] // ""' "$cfg" 2>/dev/null)"
+        break
+        ;;
+    esac
+  done
+fi
 
 if [ -z "$PROJECT" ]; then
   echo "[service-logs] Could not determine the compose project, giving up." >&2

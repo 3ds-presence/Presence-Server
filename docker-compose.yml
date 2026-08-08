@@ -112,6 +112,7 @@ services:
     container_name: 3ds-presence-service-logs
     restart: unless-stopped
     environment:
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-3ds-presence}
       - RETENTION_DAYS=${LOG_RETENTION_DAYS:-90}
       - MAX_SIZE_BYTES=${LOG_MAX_SIZE_BYTES:-15728640}
       - WAIT_SECS=60
