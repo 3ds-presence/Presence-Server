@@ -16,9 +16,6 @@
 
 x-logging: &default-logging
   driver: "json-file"
-  options:
-    max-size: "10m"
-    max-file: "3"
 
 services:
   # Rust backend (presence-server)
@@ -104,6 +101,25 @@ services:
       - ffl-testing-renderer
     restart: unless-stopped
     logging: *default-logging
+
+  # Daily log rotation.
+  # Copies yesterday's log into ./logs/YYYY-MM-DD/, compresses it to .xz
+  # and deletes logs older than LOG_RETENTION_DAYS.
+  service-logs:
+    build:
+      context: deploy/service-logs
+      dockerfile: Dockerfile
+    container_name: 3ds-presence-service-logs
+    restart: unless-stopped
+    environment:
+      - RETENTION_DAYS=${LOG_RETENTION_DAYS:-90}
+      - MAX_SIZE_BYTES=${LOG_MAX_SIZE_BYTES:-15728640}
+      - WAIT_SECS=60
+      - TZ=${TZ:-Europe/Paris}
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs:/logs
 
 volumes:
   backend-data:

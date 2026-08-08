@@ -1,4 +1,4 @@
-# 3DS Presence — Discord Rich Presence for Nintendo 3DS
+# 3DS Presence — service-logs sidecar image
 # Copyright (C) 2026 3DS Presence - LeonLeBreton
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-.env
-backend-data/
-frontend-dyn/
-logs/
+FROM alpine:3.22
+
+# coreutils : GNU date (handles yesterday, timezones, DST correctly)
+# jq         : read config.v2.json (compose labels)
+# xz         : compression (busybox applet cannot compress)
+# tzdata     : named timezones (TZ)
+RUN apk add --no-cache coreutils jq xz tzdata
+
+COPY rotate.sh /rotate.sh
+RUN chmod +x /rotate.sh
+
+CMD ["sh", "/rotate.sh"]
