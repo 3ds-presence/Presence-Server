@@ -70,7 +70,6 @@ services:
       dockerfile: Dockerfile
       args:
         # Used on compilation (frontend must be rebuilt if changed)
-        - VITE_DISCORD_OAUTH_URL=${DISCORD_OAUTH_URL}
         - VITE_TURNSTILE_SITEKEY=${TURNSTILE_SITEKEY:-}
     ports:
       - "${NGINX_PORT:-8080}:80"
