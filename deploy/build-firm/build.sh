@@ -62,15 +62,39 @@ while true; do
     fi
 
     cd "$SRC_DIR"
+
+    # Detect the base Luma3DS version
+    # Dirty hack but I don't really have a better idea
+    # Just hope this doesn't break in the future
+    LUMA_REMOTE="https://github.com/LumaTeam/Luma3DS.git"
+    git remote add luma "$LUMA_REMOTE" 2>/dev/null || true
+    git fetch luma 'refs/tags/v*:refs/tags/v*' 2>/dev/null || true
+
+    LUMA_VERSION=""
+    BEST_SCORE=999999
+    for tag in $(git tag -l 'v*'); do
+        score=$(git diff --name-only "$tag" HEAD | wc -l)
+        if [ "$score" -lt "$BEST_SCORE" ]; then
+            BEST_SCORE=$score
+            LUMA_VERSION=$tag
+        fi
+    done
+
+    if [ -n "$LUMA_VERSION" ]; then
+        git tag -f "$LUMA_VERSION" HEAD
+    fi
+    log "Detected base Luma3DS version: $LUMA_VERSION"
+
+    # Extract Presence3DS version (for the version file)
+    VERSION="$(sed -n 's/.*#define PRESENCE3DS_VERSION "\([^"]*\)".*/\1/p' \
+        "$SRC_DIR/sysmodules/rosalina/include/discord/discord_rpc_main.h")"
+
     log "Building ..."
     make
     log "Copying boot.firm -> $RESULT_DIR/"
     cp boot.firm "$RESULT_DIR/boot.firm"
     chmod o+r "$RESULT_DIR/boot.firm"
 
-    # --- Extract version ---
-    VERSION="$(sed -n 's/.*#define PRESENCE3DS_VERSION "\([^"]*\)".*/\1/p' \
-        "$SRC_DIR/sysmodules/rosalina/include/discord/discord_rpc_main.h")"
     printf '%s\n' "$VERSION" > "$RESULT_DIR/version"
     chmod o+r "$RESULT_DIR/version"
     log "Done : $VERSION"
