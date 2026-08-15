@@ -122,5 +122,15 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./logs:/logs
 
+  service-build-firm:
+    build:
+      context: deploy/build-firm
+      dockerfile: Dockerfile
+    container_name: 3ds-presence-service-build-firm
+    restart: unless-stopped
+    volumes:
+      - ./deploy/build-firm/info:/app/info
+      - ./frontend-dyn:/app/result
+
 volumes:
   backend-data:
