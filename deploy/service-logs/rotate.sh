@@ -78,7 +78,7 @@ fi
 # Next available part number for a container inside a day folder
 next_part() {
   n=1
-  while [ -e "$1/$2-$n.json.log.xz" ]; do n=$((n + 1)); done
+  while [ -e "$1/$2-$n.json.log.xz" ] || [ -e "$1/$2-$n.json.log" ]; do n=$((n + 1)); done
   echo "$n"
 }
 
@@ -112,6 +112,10 @@ retention() {
 # mark_done=yes touches the .done marker (automatic yesterday rotation).
 archive_folder() {
   dir="$1"; mark_done="$2"
+  # A day folder already marked .done must not be rotated again.
+  if [ "$mark_done" = "yes" ] && [ -e "$dir/.done" ]; then
+    return 0
+  fi
   mkdir -p "$dir"
   for cfg in "$CONTAINERS_DIR"/*/config.v2.json; do
     [ -f "$cfg" ] || continue
@@ -152,7 +156,10 @@ archive_oversized() {
     [ -f "$logfile" ] && [ -s "$logfile" ] || continue
 
     size="$(wc -c < "$logfile" | tr -d ' ')"
-    [ -n "$size" ] && [ "$size" -ge "$MAX_SIZE_BYTES" ] && archive_log "$name" "$logfile" "$dir"
+    case "$size" in
+      ''|*[!0-9]*) ;;  # empty or non-numeric -> ignore
+      *) [ "$size" -ge "$MAX_SIZE_BYTES" ] && archive_log "$name" "$logfile" "$dir" ;;
+    esac
   done
   retention
 }
@@ -173,7 +180,9 @@ case "$MODE" in
       # 2) Daily rotation of yesterday (once per day, marked .done)
       target="$(date -d '-1 day' +%F 2>/dev/null)"
       [ -n "$target" ] || target="$(date +%F)"
-      archive_folder "$LOG_DIR/$target" yes
+      if [ ! -e "$LOG_DIR/$target/.done" ]; then
+        archive_folder "$LOG_DIR/$target" yes
+      fi
       sleep "$WAIT_SECS"
     done
     ;;
