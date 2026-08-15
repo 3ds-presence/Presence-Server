@@ -67,6 +67,13 @@ while true; do
     log "Copying boot.firm -> $RESULT_DIR/"
     cp boot.firm "$RESULT_DIR/boot.firm"
     chmod o+r "$RESULT_DIR/boot.firm"
+
+    # --- Extract version ---
+    VERSION="$(sed -n 's/.*#define PRESENCE3DS_VERSION "\([^"]*\)".*/\1/p' \
+        "$SRC_DIR/sysmodules/rosalina/include/discord/discord_rpc_main.h")"
+    printf '%s\n' "$VERSION" > "$RESULT_DIR/version"
+    chmod o+r "$RESULT_DIR/version"
+    log "Done : $VERSION"
     log "Cleaning ..."
     make clean
 
