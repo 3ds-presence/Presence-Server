@@ -46,6 +46,8 @@ services:
       - ACTIVITY_COOLDOWN_SECS=5
       # Maximum number of concurrent sessions per IP
       - MAX_CLIENTS_PER_IP=8
+
+      - SESSION_TIMEOUT_SECS=${SESSION_TIMEOUT_SECS:-60}
       
       - ASSETS_BASE_URL=${ASSETS_BASE_URL}
       - SCRIPTS_DIR=${SCRIPTS_DIR}
