@@ -97,6 +97,13 @@ while true; do
 
     printf '%s\n' "$VERSION" > "$RESULT_DIR/version"
     chmod o+r "$RESULT_DIR/version"
+
+    # SHA-256 of the generated boot.firm.
+    FIRM_SHA256=$(sha256sum "$RESULT_DIR/boot.firm" | awk '{print $1}')
+    echo -n "$FIRM_SHA256" > "$RESULT_DIR/boot.firm.sha256"
+    chmod o+r "$RESULT_DIR/boot.firm.sha256"
+    log "boot.firm SHA-256: $FIRM_SHA256"
+
     log "Done : $VERSION"
     log "Cleaning ..."
     make clean
