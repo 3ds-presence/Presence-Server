@@ -60,6 +60,7 @@ services:
     volumes:
       - backend-data:/app/data
       - ./backend/activity_generator/scripts:${SCRIPTS_DIR}:ro
+      - ./frontend-dyn:/app/build_info:ro
     depends_on:
       - nginx
     restart: unless-stopped
